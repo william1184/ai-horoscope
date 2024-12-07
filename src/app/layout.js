@@ -1,4 +1,5 @@
 import localFont from "next/font/local";
+import Link from "next/link";
 import "./globals.css";
 
 const geistSans = localFont({
@@ -29,9 +30,9 @@ export default function RootLayout({ children }) {
         <header>
           <nav className="flex align-items-center bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 font-mono">
             <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
-              <a href="/" className="flex items-center">
+              <Link href="/" className="flex items-center">
                 <span className="self-center text-3xl font-semibold whitespace-nowrap dark:text-white">{metadata.title}</span>
-              </a>
+              </Link>
             </div>
           </nav>
         </header>
