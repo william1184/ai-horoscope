@@ -46,6 +46,11 @@ export default function Home() {
     }
   };
 
+  const resetForm = () => {
+    setPrompt("")
+    setResponse(null)
+  }
+
   return (
     <div className="flex flex-col items-center justify-center p-4">
       <h1 className="text-2xl font-mono font-extrabold text-white mb-6 text-center leading-relaxed animate-fade-in">
@@ -62,7 +67,7 @@ export default function Home() {
       {!loading && !response && (
         <form onSubmit={handleSubmit} className="w-full max-w-md bg-white p-6 rounded-lg shadow-2xl font-mono mb-4">
           <div className="grid grid-cols-2 gap-4 mb-8">
-            {signs.map(({name, icon}) => (
+            {signs.map(({ name, icon }) => (
               <button
                 key={name}
                 onClick={() => handleSignClick(name)}
@@ -84,7 +89,7 @@ export default function Home() {
       )}
       {loading && (
         <div className="mt-6 text-white text-lg animate-pulse">
-        🔮 Consulting the stars...
+          🔮 Consulting the stars...
         </div>
       )}
 
@@ -93,6 +98,15 @@ export default function Home() {
           <h2 className="text-2xl font-mono text-purple-600 mb-4">Your prediction:</h2>
           <pre className="text-xl text-gray-700 whitespace-pre-wrap">{response.response}</pre>
         </div>
+      )}
+      <br></br>
+      {response && (
+        <button
+          onClick={() => resetForm()}
+          className="bg-purple-200 hover:bg-purple-300 text-purple-700 font-bold py-2 px-4 rounded"
+        >
+          Try again
+        </button>
       )}
     </div>
   );
