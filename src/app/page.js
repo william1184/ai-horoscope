@@ -1,40 +1,47 @@
-'use client'
-import { useState } from 'react';
-
-const signs = [
-  { name: 'Áries', icon: '♈' },
-  { name: 'Touro', icon: '♉' },
-  { name: 'Gêmeos', icon: '♊' },
-  { name: 'Câncer', icon: '♋' },
-  { name: 'Leão', icon: '♌' },
-  { name: 'Virgem', icon: '♍' },
-  { name: 'Libra', icon: '♎' },
-  { name: 'Escorpião', icon: '♏' },
-  { name: 'Sagitário', icon: '♐' },
-  { name: 'Capricórnio', icon: '♑' },
-  { name: 'Aquário', icon: '♒' },
-  { name: 'Peixes', icon: '♓' },
-];
+'use client';
+import { useEffect, useState } from 'react';
 
 export default function Home() {
+  const [signs, setSigns] = useState([]);
   const [sign, setSign] = useState('');
   const [response, setResponse] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const handleSignClick = async (sign) => {
-    setSign(`${sign}`);
+  // Fetch signs from the API
+  useEffect(() => {
+    const fetchSigns = async () => {
+      
+      try {
+        const res = await fetch('/api/signs', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        const response = await res.json();
+        setSigns(response.data.signs); // Assuming the API returns { signs: [...] }
+      } catch (error) {
+        console.error('Error fetching signs:', error);
+      }
+    };
+
+    fetchSigns();
+  }, []);
+
+  const handleSignClick = async (id) => {
+    setSign(`${id}`);
   };
 
   const handleSubmit = async (e) => {
+    e.preventDefault();
     setLoading(true);
 
     try {
-      const res = await fetch('/api/horoscopes', {
-        method: 'POST',
+      const res = await fetch(`/api/signs/${sign}/prediction`, {
+        method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ sign: sign }),
       });
 
       const data = await res.json();
@@ -47,9 +54,9 @@ export default function Home() {
   };
 
   const resetForm = () => {
-    setSign("")
-    setResponse(null)
-  }
+    setSign('');
+    setResponse(null);
+  };
 
   return (
     <div className="flex flex-col items-center justify-center p-4">
@@ -64,10 +71,10 @@ export default function Home() {
       {!loading && !response && (
         <form onSubmit={handleSubmit} className="w-full max-w-md bg-white p-6 rounded-lg shadow-2xl font-mono mb-4">
           <div className="grid grid-cols-2 gap-4 mb-8">
-            {signs.map(({ name, icon }) => (
+            {signs.map(({ id, name, icon }) => (
               <button
-                key={name}
-                onClick={() => handleSignClick(name)}
+                key={id}
+                onClick={() => handleSignClick(id)}
                 className="bg-purple-200 hover:bg-purple-300 text-purple-700 font-bold py-2 px-2 rounded"
               >
                 {icon} {name}
