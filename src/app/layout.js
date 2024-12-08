@@ -15,12 +15,12 @@ const geistMono = localFont({
 
 export const metadata = {
   title: "Horoscope AI",
-  description: "Generative Horoscope",
+  description: "Gerar de previsões para seu dia a dia",
 };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="pt-BR">
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </head>
