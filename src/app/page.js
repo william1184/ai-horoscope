@@ -7,10 +7,27 @@ export default function Home() {
   const [response, setResponse] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  // Add stars to the background
+  useEffect(() => {
+    const createStars = () => {
+      const starContainer = document.querySelector('.stars');
+      const starCount = 20; // Number of stars
+
+      for (let i = 0; i < starCount; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        star.style.top = `${Math.random() * 100}%`; // Random position on Y-axis
+        star.style.left = `${Math.random() * 100}%`; // Random position on X-axis
+        starContainer.appendChild(star);
+      }
+    };
+
+    createStars();
+  }, []);
+
   // Fetch signs from the API
   useEffect(() => {
     const fetchSigns = async () => {
-      
       try {
         const res = await fetch('/api/signs', {
           method: 'GET',
@@ -59,59 +76,75 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center p-4">
-      <h1 className="text-2xl font-mono font-extrabold text-white mb-6 text-center leading-relaxed animate-fade-in">
-        Quer dar uma espiadinha no futuro?
-        <br />
-        <span className="text-lg font-medium">
-          Descubra o que o aguarda hoje. <br></br> Selecione seu signo e embarque nessa jornada astral!
-        </span>
-      </h1>
+    <form onSubmit={handleSubmit}>
+      <input
+        type="hidden"
+        value={sign}
+        onChange={(e) => setSign(e.target.value)}
+      />
+      <div className="flex flex-col items-center justify-center p-4 min-h-screen relative overflow-hidden">
+        {/* Starry background */}
+        <div className="absolute inset-0 stars"></div>
 
-      {!loading && !response && (
-        <form onSubmit={handleSubmit} className="w-full max-w-md bg-white p-6 rounded-lg shadow-2xl font-mono mb-4">
-          <div className="grid grid-cols-2 gap-4 mb-8">
-            {signs.map(({ id, name, icon }) => (
-              <button
-                key={id}
-                onClick={() => handleSignClick(id)}
-                className="bg-purple-200 hover:bg-purple-300 text-purple-700 font-bold py-2 px-2 rounded"
-              >
-                {icon} {name}
-              </button>
-            ))}
+        <h1 className="text-2xl font-mono font-extrabold text-white mb-6 text-center leading-relaxed animate-fade-in">
+          Quer dar uma espiadinha no futuro?
+          <br />
+          <span className="text-lg font-medium">
+            Descubra o que o aguarda hoje. <br></br> Selecione seu signo e embarque nessa jornada astral!
+          </span>
+        </h1>
+        <br></br>
+
+        {!loading && !response && (
+          <div className="relative w-96 h-96">
+            {signs.map(({ id, name, icon }, index) => {
+              const radius = 45; // Define a mesma distância para ambos os eixos
+              const angle = (index / signs.length) * 2 * Math.PI; // Calculate angle for each button
+              const x = 50 + radius * Math.cos(angle); // X position
+              const y = 50 + radius * Math.sin(angle); // Y position
+
+              return (
+                <button
+                  key={id}
+                  onClick={() => handleSignClick(id)}
+                  style={{
+                    position: 'absolute',
+                    top: `${y}%`,
+                    left: `${x}%`,
+                    transform: 'translate(-50%, -50%)',
+                  }}
+                  className="bg-white hover:bg-blue-400 font-bold py-2 px-4 rounded-full"
+                  title={name} // Tooltip com o nome do signo
+                >
+                  <span style={{ fontSize: '1.5em' }}>{icon}</span> {/* Aumenta o tamanho do ícone */}
+                </button>
+              );
+            })}
           </div>
+        )}
 
-          <input
-            type="hidden"
-            value={sign}
-            onChange={(e) => setSign(e.target.value)}
-            placeholder="Digite seu signo ou pergunta"
-            className="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-          />
-        </form>
-      )}
-      {loading && (
-        <div className="mt-6 text-white text-lg animate-pulse">
-          🔮 Consultando os astros...
-        </div>
-      )}
+        {loading && (
+          <div className="mt-6 text-white text-lg animate-pulse">
+            🔮 Consultando os astros...
+          </div>
+        )}
 
-      {response && (
-        <div className="mt-6 bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
-          <h2 className="text-center text-2xl font-mono text-purple-600 mb-4">Sua previsão:</h2>
-          <pre className="text-center text-xl text-gray-700 whitespace-pre-wrap">{response.response}</pre>
-        </div>
-      )}
-      <br></br>
-      {response && (
-        <button
-          onClick={() => resetForm()}
-          className="bg-purple-200 hover:bg-purple-300 text-purple-700 font-bold py-2 px-4 rounded"
-        >
-          Voltar
-        </button>
-      )}
-    </div>
+        {response && (
+          <div className="mt-6 bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+            <h2 className="text-center text-2xl font-mono text-blue-600 mb-4">Sua previsão:</h2>
+            <pre className="text-center text-xl text-gray-700 whitespace-pre-wrap">{response.response}</pre>
+          </div>
+        )}
+        <br></br>
+        {response && (
+          <button
+            onClick={() => resetForm()}
+            className="bg-white hover:bg-blue-300 text-blue-700 font-bold py-2 px-4 rounded"
+          >
+            Voltar
+          </button>
+        )}
+      </div>
+    </form>
   );
 }
