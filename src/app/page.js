@@ -77,14 +77,26 @@ export default function Home() {
     setResponse(null);
   };
 
-  const share = async () => {
-    const element = document.getElementById('prediction-card'); // The element to capture
+  const createCanvasFromPrediction = async () => {
+    const element = document.getElementById('prediction-card');
     if (!element) return;
 
+    // Captura o elemento como um canvas
+    const canvas = await html2canvas(element, {
+      scale: 2, // Aumenta a escala para maior qualidade
+      useCORS: true, // Permite capturar imagens externas
+      backgroundColor: null, // Garante que o fundo seja transparente, se necessário
+    });
+
+    // Converte o canvas para uma imagem
+    return canvas.toDataURL('image/png');
+  }
+
+
+  const share = async () => {
     try {
       // Capture the element as an image
-      const canvas = await html2canvas(element, { scale: 3 }); // Ajuste de escala para maior qualidade
-      const image = canvas.toDataURL('image/png'); // Convert canvas to base64 image
+      const image = await createCanvasFromPrediction();
 
       // Check if the browser supports the Web Share API
       if (navigator.share) {
@@ -93,33 +105,17 @@ export default function Home() {
           text: 'Confira minha previsão do dia!',
           files: [new File([image], 'previsao.png', { type: 'image/png' })],
         });
-      } else {
-        // Fallback: Download the image
-        const link = document.createElement('a');
-        link.href = image;
-        link.download = 'previsao.png';
-        link.click();
       }
+
     } catch (error) {
       console.error('Error sharing:', error);
     }
   };
 
   const saveImage = async () => {
-    const element = document.getElementById('prediction-card');
-    if (!element) return;
-  
     try {
-      // Captura o elemento como um canvas
-      const canvas = await html2canvas(element, {
-        scale: 2, // Aumenta a escala para maior qualidade
-        useCORS: true, // Permite capturar imagens externas
-        backgroundColor: null, // Garante que o fundo seja transparente, se necessário
-      });
-  
-      // Converte o canvas para uma imagem
-      const image = canvas.toDataURL('image/png');
-  
+      const image = await createCanvasFromPrediction();
+
       // Trigger download
       const link = document.createElement('a');
       link.href = image;
