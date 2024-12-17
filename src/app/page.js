@@ -1,7 +1,7 @@
 'use client';
 import html2canvas from 'html2canvas';
 import { useEffect, useState } from 'react';
-import { FaSave, FaShareAlt } from 'react-icons/fa'; // Importando ícones do FontAwesome
+import { FaSave } from 'react-icons/fa'; // Importando ícones do FontAwesome
 
 export default function Home() {
   const [signs, setSigns] = useState([]);
@@ -93,25 +93,6 @@ export default function Home() {
   }
 
 
-  const share = async () => {
-    try {
-      // Capture the element as an image
-      const image = await createCanvasFromPrediction();
-
-      // Check if the browser supports the Web Share API
-      if (navigator.share) {
-        await navigator.share({
-          title: 'Minha previsão',
-          text: 'Confira minha previsão do dia!',
-          files: [new File([image], 'previsao.png', { type: 'image/png' })],
-        });
-      }
-
-    } catch (error) {
-      console.error('Error sharing:', error);
-    }
-  };
-
   const saveImage = async () => {
     try {
       const image = await createCanvasFromPrediction();
@@ -200,13 +181,6 @@ export default function Home() {
         {response && (
           <div className="flex flex-col gap-2">
 
-            <button
-              type="button"
-              onClick={share}
-              className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded flex items-center gap-2"
-            >
-              <FaShareAlt /> Compartilhar
-            </button>
             <button
               type="button"
               onClick={saveImage}
