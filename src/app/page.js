@@ -1,5 +1,7 @@
 'use client';
+import html2canvas from 'html2canvas';
 import { useEffect, useState } from 'react';
+import { FaSave, FaShareAlt } from 'react-icons/fa'; // Importando ícones do FontAwesome
 
 export default function Home() {
   const [signs, setSigns] = useState([]);
@@ -75,6 +77,59 @@ export default function Home() {
     setResponse(null);
   };
 
+  const share = async () => {
+    const element = document.getElementById('prediction-card'); // The element to capture
+    if (!element) return;
+
+    try {
+      // Capture the element as an image
+      const canvas = await html2canvas(element, { scale: 3 }); // Ajuste de escala para maior qualidade
+      const image = canvas.toDataURL('image/png'); // Convert canvas to base64 image
+
+      // Check if the browser supports the Web Share API
+      if (navigator.share) {
+        await navigator.share({
+          title: 'Minha previsão',
+          text: 'Confira minha previsão do dia!',
+          files: [new File([image], 'previsao.png', { type: 'image/png' })],
+        });
+      } else {
+        // Fallback: Download the image
+        const link = document.createElement('a');
+        link.href = image;
+        link.download = 'previsao.png';
+        link.click();
+      }
+    } catch (error) {
+      console.error('Error sharing:', error);
+    }
+  };
+
+  const saveImage = async () => {
+    const element = document.getElementById('prediction-card');
+    if (!element) return;
+  
+    try {
+      // Captura o elemento como um canvas
+      const canvas = await html2canvas(element, {
+        scale: 2, // Aumenta a escala para maior qualidade
+        useCORS: true, // Permite capturar imagens externas
+        backgroundColor: null, // Garante que o fundo seja transparente, se necessário
+      });
+  
+      // Converte o canvas para uma imagem
+      const image = canvas.toDataURL('image/png');
+  
+      // Trigger download
+      const link = document.createElement('a');
+      link.href = image;
+      link.download = 'previsao.png';
+      link.click();
+    } catch (error) {
+      console.error('Error saving image:', error);
+    }
+  };
+
   return (
     <form onSubmit={handleSubmit}>
       <input
@@ -93,12 +148,11 @@ export default function Home() {
             Descubra o que o aguarda hoje. <br></br> Selecione seu signo e embarque nessa jornada astral!
           </span>
         </h1>
-        <br></br>
 
         {!loading && !response && (
           <div className="relative w-96 h-96">
             {signs.map(({ id, name, icon }, index) => {
-              const radius = 45; // Define a mesma distância para ambos os eixos
+              const radius = 42; // Define a mesma distância para ambos os eixos
               const angle = (index / signs.length) * 2 * Math.PI; // Calculate angle for each button
               const x = 50 + radius * Math.cos(angle); // X position
               const y = 50 + radius * Math.sin(angle); // Y position
@@ -130,19 +184,49 @@ export default function Home() {
         )}
 
         {response && (
-          <div className="mt-6 bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
-            <h2 className="text-center text-2xl font-mono text-blue-600 mb-4">Sua previsão:</h2>
-            <pre className="text-center text-xl text-gray-700 whitespace-pre-wrap">{response.response}</pre>
+          <div
+            id="prediction-card"
+            className="mt-6 bg-gradient-to-r from-blue-100 via-white to-blue-100 p-6 shadow-2xl max-w-md w-full border-2 border-blue-300"
+          >
+            <div className="flex items-center justify-center mb-4">
+              <span className="text-4xl">🔮</span> {/* Ícone decorativo */}
+              <h2 className="text-2xl font-bold text-blue-600 ml-2">Sua Previsão</h2>
+            </div>
+            <pre className="text-center text-lg text-gray-800 font-serif whitespace-pre-wrap leading-relaxed">
+              {response.response}
+            </pre>
+            <div className="mt-4 text-center">
+              <span className="text-sm text-gray-500 italic">&ldquo;Confie nos astros e aproveite o dia!&rdquo;</span>
+            </div>
           </div>
         )}
         <br></br>
         {response && (
-          <button
-            onClick={() => resetForm()}
-            className="bg-white hover:bg-blue-300 text-blue-700 font-bold py-2 px-4 rounded"
-          >
-            Voltar
-          </button>
+          <div className="flex flex-col gap-2">
+
+            <button
+              type="button"
+              onClick={share}
+              className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded flex items-center gap-2"
+            >
+              <FaShareAlt /> Compartilhar
+            </button>
+            <button
+              type="button"
+              onClick={saveImage}
+              className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded flex items-center gap-2"
+            >
+              <FaSave /> Salvar Imagem
+            </button>
+
+            <button
+              type="reset"
+              onClick={() => resetForm()}
+              className="bg-white hover:bg-blue-300 text-blue-700 font-bold py-2 px-4 rounded"
+            >
+              Voltar
+            </button>
+          </div>
         )}
       </div>
     </form>

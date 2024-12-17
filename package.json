@@ -10,9 +10,11 @@
   },
   "dependencies": {
     "@google/generative-ai": "^0.21.0",
+    "html2canvas": "^1.4.1",
     "next": "15.0.4",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-icons": "^5.4.0"
   },
   "devDependencies": {
     "eslint": "^8",
