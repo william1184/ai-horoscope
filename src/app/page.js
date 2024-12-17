@@ -9,8 +9,20 @@ export default function Home() {
   const [response, setResponse] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // Add stars to the background
   useEffect(() => {
+    // Verifica se já existe uma previsão salva no localStorage
+    const savedPrediction = localStorage.getItem('dailyPrediction');
+    const savedDate = localStorage.getItem('predictionDate');
+    const today = new Date().toISOString().split('T')[0]; // Data atual no formato YYYY-MM-DD
+
+    if (savedPrediction && savedDate === today) {
+      // Se já existe uma previsão para hoje, exibe-a
+      setResponse(JSON.parse(savedPrediction));
+    }
+  }, []);
+
+   // Add stars to the background
+   useEffect(() => {
     const createStars = () => {
       const starContainer = document.querySelector('.stars');
       const starCount = 20; // Number of stars
@@ -65,6 +77,11 @@ export default function Home() {
 
       const data = await res.json();
       setResponse(data);
+
+      // Salva a previsão e a data no localStorage
+      const today = new Date().toISOString().split('T')[0]; // Data atual no formato YYYY-MM-DD
+      localStorage.setItem('dailyPrediction', JSON.stringify(data));
+      localStorage.setItem('predictionDate', today);
     } catch (error) {
       console.error('Error:', error);
     } finally {
@@ -90,8 +107,7 @@ export default function Home() {
 
     // Converte o canvas para uma imagem
     return canvas.toDataURL('image/png');
-  }
-
+  };
 
   const saveImage = async () => {
     try {
@@ -180,7 +196,6 @@ export default function Home() {
         <br></br>
         {response && (
           <div className="flex flex-col gap-2">
-
             <button
               type="button"
               onClick={saveImage}
@@ -189,13 +204,13 @@ export default function Home() {
               <FaSave /> Salvar Imagem
             </button>
 
-            <button
+            {/* <button
               type="reset"
               onClick={() => resetForm()}
               className="bg-white hover:bg-blue-300 text-blue-700 font-bold py-2 px-4 rounded"
             >
               Voltar
-            </button>
+            </button> */}
           </div>
         )}
       </div>
