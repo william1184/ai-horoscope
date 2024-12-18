@@ -4,45 +4,26 @@ import { useEffect, useState } from 'react';
 import { FaSave } from 'react-icons/fa'; // Importando ícones do FontAwesome
 
 export default function Home() {
-  const [signs, setSigns] = useState([]);
   const [sign, setSign] = useState('');
   const [response, setResponse] = useState(null);
+  const [signsLoading, setSignsLoading] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [signs, setSigns] = useState([]);
+  const [stars, setStars] = useState([]);
 
   useEffect(() => {
-    // Verifica se já existe uma previsão salva no localStorage
-    const savedPrediction = localStorage.getItem('dailyPrediction');
-    const savedDate = localStorage.getItem('predictionDate');
-    const today = new Date().toISOString().split('T')[0]; // Data atual no formato YYYY-MM-DD
-
-    if (savedPrediction && savedDate === today) {
-      // Se já existe uma previsão para hoje, exibe-a
-      setResponse(JSON.parse(savedPrediction));
-    }
+    const starCount = 25;
+    const generatedStars = Array.from({ length: starCount }, () => ({
+      top: `${Math.random() * 100}%`,
+      left: `${Math.random() * 100}%`,
+    }));
+    setStars(generatedStars);
   }, []);
 
-   // Add stars to the background
-   useEffect(() => {
-    const createStars = () => {
-      const starContainer = document.querySelector('.stars');
-      const starCount = 20; // Number of stars
-
-      for (let i = 0; i < starCount; i++) {
-        const star = document.createElement('div');
-        star.className = 'star';
-        star.style.top = `${Math.random() * 100}%`; // Random position on Y-axis
-        star.style.left = `${Math.random() * 100}%`; // Random position on X-axis
-        starContainer.appendChild(star);
-      }
-    };
-
-    createStars();
-  }, []);
-
-  // Fetch signs from the API
   useEffect(() => {
     const fetchSigns = async () => {
       try {
+        setSignsLoading(true);
         const res = await fetch('/api/signs', {
           method: 'GET',
           headers: {
@@ -50,16 +31,18 @@ export default function Home() {
           },
         });
         const response = await res.json();
-        setSigns(response.data.signs); // Assuming the API returns { signs: [...] }
+        setSigns(response.data.signs);
       } catch (error) {
         console.error('Error fetching signs:', error);
+      } finally {
+        setSignsLoading(false);
       }
     };
 
     fetchSigns();
   }, []);
 
-  const handleSignClick = async (id) => {
+  const handleSignClick = (id) => {
     setSign(`${id}`);
   };
 
@@ -68,6 +51,14 @@ export default function Home() {
     setLoading(true);
 
     try {
+
+      const predict_by_sign = getDailyPredictionSaved()
+      if (predict_by_sign && predict_by_sign[sign]) {
+        setResponse(predict_by_sign[sign]);
+
+        return;
+      }
+
       const res = await fetch(`/api/signs/${sign}/prediction`, {
         method: 'GET',
         headers: {
@@ -79,15 +70,35 @@ export default function Home() {
       setResponse(data);
 
       // Salva a previsão e a data no localStorage
-      const today = new Date().toISOString().split('T')[0]; // Data atual no formato YYYY-MM-DD
-      localStorage.setItem('dailyPrediction', JSON.stringify(data));
-      localStorage.setItem('predictionDate', today);
+      predict_by_sign[sign] = data
+      persistPrediction(predict_by_sign)
     } catch (error) {
       console.error('Error:', error);
     } finally {
       setLoading(false);
     }
   };
+
+  const get_now_in_str = () => {
+    const datenow = new Date();
+    return `${datenow.getFullYear()}-${datenow.getMonth() + 1}-${datenow.getDate()}`
+  }
+
+  const getDailyPredictionSaved = () => {
+    const savedPrediction = localStorage.getItem('dailyPrediction');
+    const savedDate = localStorage.getItem('predictionDate');
+
+    if (savedPrediction && savedDate === get_now_in_str()) {
+      return JSON.parse(savedPrediction);
+    }
+
+    return {}
+  }
+
+  const persistPrediction = (predict_by_sign) => {
+    localStorage.setItem('dailyPrediction', JSON.stringify(predict_by_sign));
+    localStorage.setItem('predictionDate', get_now_in_str());
+  }
 
   const resetForm = () => {
     setSign('');
@@ -132,7 +143,15 @@ export default function Home() {
       />
       <div className="flex flex-col items-center justify-center p-4 min-h-screen relative overflow-hidden">
         {/* Starry background */}
-        <div className="absolute inset-0 stars"></div>
+        <div className="absolute inset-0 stars">
+          {stars.map((star, index) => (
+            <div
+              key={index}
+              className="star"
+              style={{ top: star.top, left: star.left }}
+            ></div>
+          ))}
+        </div>
 
         <h1 className="text-2xl font-mono font-extrabold text-white mb-6 text-center leading-relaxed animate-fade-in">
           Quer dar uma espiadinha no futuro?
@@ -143,35 +162,41 @@ export default function Home() {
         </h1>
 
         {!loading && !response && (
-          <div className="relative w-96 h-96">
-            {signs.map(({ id, name, icon }, index) => {
-              const radius = 42; // Define a mesma distância para ambos os eixos
-              const angle = (index / signs.length) * 2 * Math.PI; // Calculate angle for each button
-              const x = 50 + radius * Math.cos(angle); // X position
-              const y = 50 + radius * Math.sin(angle); // Y position
+          <div>
+            {signsLoading ? (
+              <div className="text-white">Loading signs...</div>
+            ) : (
+              <div className="relative w-96 h-96">
+                {signs.map(({ id, name, icon }, index) => {
+                  const radius = 42; // Define a mesma distância para ambos os eixos
+                  const angle = (index / signs.length) * 2 * Math.PI; // Calculate angle for each button
+                  const x = 50 + radius * Math.cos(angle); // X position
+                  const y = 50 + radius * Math.sin(angle); // Y position
 
-              return (
-                <button
-                  key={id}
-                  onClick={() => handleSignClick(id)}
-                  style={{
-                    position: 'absolute',
-                    top: `${y}%`,
-                    left: `${x}%`,
-                    transform: 'translate(-50%, -50%)',
-                  }}
-                  className="bg-white hover:bg-blue-400 font-bold py-2 px-4 rounded-full"
-                  title={name} // Tooltip com o nome do signo
-                >
-                  <span style={{ fontSize: '1.5em' }}>{icon}</span> {/* Aumenta o tamanho do ícone */}
-                </button>
-              );
-            })}
+                  return (
+                    <button
+                      key={id}
+                      onClick={() => handleSignClick(id)}
+                      style={{
+                        position: 'absolute',
+                        top: `${y}%`,
+                        left: `${x}%`,
+                        transform: 'translate(-50%, -50%)',
+                      }}
+                      className="bg-white hover:bg-blue-400 font-bold py-2 px-4 rounded-full"
+                      title={name} // Tooltip com o nome do signo
+                    >
+                      <span style={{ fontSize: '1.5em' }}>{icon}</span> {/* Aumenta o tamanho do ícone */}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </div>
         )}
 
         {loading && (
-          <div className="mt-6 text-white text-lg animate-pulse">
+          <div className="mt-6 text-white text-lg animate-pulse" aria-live="polite">
             🔮 Consultando os astros...
           </div>
         )}
@@ -191,6 +216,17 @@ export default function Home() {
             <div className="mt-4 text-center">
               <span className="text-sm text-gray-500 italic">&ldquo;Confie nos astros e aproveite o dia!&rdquo;</span>
             </div>
+            {/* Adicionando o rodapé com o nome do site */}
+            <div className="mt-6 text-center">
+              <a
+                href="/"
+                className="text-blue-500 hover:text-blue-700 font-bold text-sm"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Powered by Horoscope AI
+              </a>
+            </div>
           </div>
         )}
         <br></br>
@@ -204,13 +240,13 @@ export default function Home() {
               <FaSave /> Salvar Imagem
             </button>
 
-            {/* <button
+            <button
               type="reset"
               onClick={() => resetForm()}
               className="bg-white hover:bg-blue-300 text-blue-700 font-bold py-2 px-4 rounded"
             >
               Voltar
-            </button> */}
+            </button>
           </div>
         )}
       </div>

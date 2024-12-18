@@ -1,4 +1,5 @@
 import localFont from "next/font/local";
+import Head from "next/head";
 import Link from "next/link";
 import "./globals.css";
 
@@ -21,9 +22,14 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="pt-BR">
-      <head>
+      <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      </head>
+        <meta name="description" content="Discover your daily horoscope predictions with Horoscope AI." />
+        <meta name="keywords" content="horoscope, astrology, daily predictions, zodiac signs" />
+        <meta name="author" content="Horoscope AI Team" />
+        <meta property="og:title" content="Horoscope AI - Daily Predictions" />
+        <meta property="og:description" content="Discover your daily horoscope predictions with Horoscope AI." />
+      </Head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gradient-to-b from-black to-blue-900 font-mono`}
       >
