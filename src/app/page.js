@@ -1,7 +1,7 @@
 'use client';
 import html2canvas from 'html2canvas';
 import { useEffect, useState } from 'react';
-import { FaSave } from 'react-icons/fa'; // Importando ícones do FontAwesome
+import { FaSave, FaShareAlt } from 'react-icons/fa'; // Importando ícones do FontAwesome
 
 export default function Home() {
   const [sign, setSign] = useState('');
@@ -120,6 +120,29 @@ export default function Home() {
     return canvas.toDataURL('image/png');
   };
 
+  const shareImage = async () => {
+    try {
+      const image = await createCanvasFromPrediction();
+  
+      if (navigator.share) {
+        // API de compartilhamento nativa
+        await navigator.share({
+          title: 'Minha previsão do dia',
+          text: 'Confira minha previsão do dia gerada pelo Horoscope AI!',
+          files: [
+            new File([await (await fetch(image)).blob()], 'previsao.png', {
+              type: 'image/png',
+            }),
+          ],
+        });
+      } else {
+        alert('Compartilhamento não suportado neste navegador.');
+      }
+    } catch (error) {
+      console.error('Erro ao compartilhar a imagem:', error);
+    }
+  };
+
   const saveImage = async () => {
     try {
       const image = await createCanvasFromPrediction();
@@ -232,6 +255,14 @@ export default function Home() {
         <br></br>
         {response && (
           <div className="flex flex-col gap-2">
+            <button
+              type="button"
+              onClick={shareImage}
+              className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded flex items-center gap-2"
+            >
+              <FaShareAlt /> Compartilhar
+            </button>
+
             <button
               type="button"
               onClick={saveImage}
