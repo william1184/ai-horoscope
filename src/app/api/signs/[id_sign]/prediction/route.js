@@ -1,5 +1,5 @@
 import { get_a_sign_prediction } from '@/utils/horoscope_agent';
-import { getSignFromId } from '@/utils/signs';
+import { getSignFromId } from '../../../../../utils/signs';
 
 
 export async function GET(request, { params}) {

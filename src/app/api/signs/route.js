@@ -1,5 +1,5 @@
-import { listSigns } from "@/utils/signs";
 import { getTranslations } from "next-intl/server";
+import { listSigns } from "../../../utils/signs";
 
 export async function GET(request, {query}) {
     const searchParams = request.nextUrl.searchParams;
