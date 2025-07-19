@@ -1,5 +1,5 @@
 
-const SIGNS = [
+export const SIGNS = [
     { id: 1, icon: '♈', translationKey: 'aries' },
     { id: 2, icon: '♉', translationKey: 'taurus' },
     { id: 3, icon: '♊', translationKey: 'gemini' },
@@ -18,7 +18,7 @@ const SIGNS = [
  * @param {number} id - The ID of the sign.
  * @returns {object|null} - The sign object or null if not found.
  */
-function getSignFromId(id) {
+export function getSignFromId(id) {
     return SIGNS.find(sign => sign.id == id) || null;
 }
 
@@ -26,9 +26,7 @@ function getSignFromId(id) {
  * List all signs.
  * @returns {Array} - An array of all sign objects.
  */
-function listSigns() {
+export function listSigns() {
     return SIGNS;
 }
-
-export { getSignFromId, listSigns };
 
