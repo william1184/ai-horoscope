@@ -1,18 +1,18 @@
-const SIGNS = [
-    { id: 1, name: 'Áries', icon: '♈' },
-    { id: 2, name: 'Touro', icon: '♉' },
-    { id: 3, name: 'Gêmeos', icon: '♊' },
-    { id: 4, name: 'Câncer', icon: '♋' },
-    { id: 5, name: 'Leão', icon: '♌' },
-    { id: 6, name: 'Virgem', icon: '♍' },
-    { id: 7, name: 'Libra', icon: '♎' },
-    { id: 8, name: 'Escorpião', icon: '♏' },
-    { id: 9, name: 'Sagitário', icon: '♐' },
-    { id: 10, name: 'Capricórnio', icon: '♑' },
-    { id: 11, name: 'Aquário', icon: '♒' },
-    { id: 12, name: 'Peixes', icon: '♓' }
-];
 
+const SIGNS = [
+    { id: 1, icon: '♈', translationKey: 'aries' },
+    { id: 2, icon: '♉', translationKey: 'taurus' },
+    { id: 3, icon: '♊', translationKey: 'gemini' },
+    { id: 4, icon: '♋', translationKey: 'cancer' },
+    { id: 5, icon: '♌', translationKey: 'leo' },
+    { id: 6, icon: '♍', translationKey: 'virgo' },
+    { id: 7, icon: '♎', translationKey: 'libra' },
+    { id: 8, icon: '♏', translationKey: 'scorpio' },
+    { id: 9, icon: '♐', translationKey: 'sagittarius' },
+    { id: 10, icon: '♑', translationKey: 'capricorn' },
+    { id: 11, icon: '♒', translationKey: 'aquarius' },
+    { id: 12, icon: '♓', translationKey: 'pisces' }
+];
 /**
  * Get a sign by its ID.
  * @param {number} id - The ID of the sign.

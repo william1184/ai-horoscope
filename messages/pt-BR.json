@@ -1,0 +1,42 @@
+{
+  "HomePage": {
+    "pageTitle": "Horoscope AI",
+    "pageDescription": "Gerar de previsões para seu dia a dia",
+    "metaKeywords": "horóscopo, astrologia, previsões diárias, signos do zodíaco",
+    "metaAuthor": "Time Horoscope AI",
+    "ogTitle": "Horoscope AI - Previsões Diárias",
+    "ogDescription": "Descubra suas previsões diárias do horóscopo com Horoscope AI.",
+    "headerTitle": "Horoscope AI",
+    "titlePrompt": "Quer dar uma espiadinha no futuro?",
+    "instructions": "Descubra o que o aguarda hoje.<br></br>Selecione seu signo e embarque nessa jornada astral!",
+    "loadingSigns": "Carregando signos...",
+    "consultingStars": "🔮 Consultando os astros...",
+    "predictionCardTitle": "Sua Previsão",
+    "predictionCardQuote": "“Confie nos astros e aproveite o dia!”",
+    "poweredBy": "Powered by Horoscope AI",
+    "shareButton": "Compartilhar",
+    "saveButton": "Salvar Imagem",
+    "backButton": "Voltar",
+    "shareNotSupportedAlert": "Compartilhamento não suportado neste navegador.",
+    "shareImageTitle": "Minha previsão do dia",
+    "shareImageText": "Confira minha previsão do dia gerada pelo Horoscope AI!",
+    "fileNamePrediction": "previsao.png"
+  },
+  "Signs": {
+    "aries": "Áries",
+    "taurus": "Touro",
+    "gemini": "Gêmeos",
+    "cancer": "Câncer",
+    "leo": "Leão",
+    "virgo": "Virgem",
+    "libra": "Libra",
+    "scorpio": "Escorpião",
+    "sagittarius": "Sagitário",
+    "capricorn": "Capricórnio",
+    "aquarius": "Aquário",
+    "pisces": "Peixes"
+  },
+  "Footer": {
+    "copyright": "Horoscope AI. Todos os direitos reservados."
+  }
+}
