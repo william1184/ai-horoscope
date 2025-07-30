@@ -11,7 +11,7 @@ async function get_a_sign_prediction(sign, locale) {
     )
 
     const model = genAI.getGenerativeModel({
-        model: "gemini-1.5-flash",
+        model: process.env.MODEL_NAME,
         generationConfig: {
             maxOutputTokens: 500,
             temperature: 1.0,
@@ -23,7 +23,7 @@ async function get_a_sign_prediction(sign, locale) {
         inclua uma previsão diária diretamente após sem citar 
         previsão diária. Se a pergunta não for sobre astrologia ocidental, 
         responda que você só pode responder perguntas relacionadas a esse tópico. 
-        Seja breve e conciso. A resposta deve ser dada usando a linguagem: ${locale}`,
+        Seja breve e conciso. A resposta deve ser dada usando o idioma: ${locale}`,
     });
 
     const result = await model.generateContent(sign);
